@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 3: Premium Navigation Menu</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        :root {
+            --bg-base: #fff5f8;
+            --text-primary: #5c3b46;
+            --text-secondary: #8c6a75;
+            --accent-pink: #ffb7c5;
+            --card-glass: rgba(255, 255, 255, 0.8);
+            --border-base: #f1d3db;
+        }
+
+        body { background: var(--bg-base); color: var(--text-primary); scroll-behavior: smooth; display: flex; min-height: 100vh; }
+
+        /* Left Side Glassmorphic Navigation Panel */
+        .sidebar-nav { width: 280px; background: var(--card-glass); border-right: 1px solid var(--border-base); position: fixed; height: 100vh; padding: 40px 25px; display: flex; flex-direction: column; justify-content: space-between; backdrop-filter: blur(12px); z-index: 100; box-shadow: 4px 0 20px rgba(92, 59, 70, 0.03); }
+        .nav-brand { font-size: 22px; font-weight: 800; color: var(--text-primary); letter-spacing: 1px; padding-left: 10px; margin-bottom: 50px; }
+        .nav-brand span { color: var(--accent-pink); }
+        
+        /* Hyperlinks & Styles */
+        .menu-links { display: flex; flex-direction: column; gap: 12px; }
+        .menu-links a { display: flex; align-items: center; gap: 15px; color: var(--text-secondary); text-decoration: none; padding: 14px 18px; font-weight: 600; font-size: 15px; border-radius: 12px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid transparent; }
+        
+        /* Hover and Active Interactivity */
+        .menu-links a:hover { color: var(--text-primary); background: #fff1f4; border-color: var(--border-base); transform: translateX(5px); }
+        .menu-links a.active { background: #ffcfd9; color: var(--text-primary); border-color: var(--border-base); box-shadow: 0 4px 12px rgba(241, 211, 219, 0.5); }
+
+        .nav-footer { font-size: 11px; color: var(--text-secondary); text-align: center; padding: 10px; opacity: 0.8; }
+
+        /* Main Content Viewport Areas */
+        .main-content { margin-left: 280px; flex: 1; padding: 0; }
+        
+        /* Content Sections for Navigation Testing */
+        section { min-height: 100vh; padding: 80px 8%; display: flex; flex-direction: column; justify-content: center; border-bottom: 1px solid var(--border-base); position: relative; }
+        section:nth-child(even) { background: #fff9fb; }
+
+        .section-tag { background: #ffebee; color: var(--text-secondary); font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 20px; width: max-content; margin-bottom: 15px; border: 1px solid var(--border-base); text-transform: uppercase; letter-spacing: 1px; }
+        h1 { font-size: 42px; font-weight: 800; margin-bottom: 20px; color: var(--text-primary); }
+        p { font-size: 16px; color: var(--text-secondary); line-height: 1.7; max-width: 650px; }
+
+        /* Floating Indicator for Demonstration */
+        .status-badge { position: absolute; top: 40px; right: 8%; background: #ffffff; padding: 8px 16px; border-radius: 30px; border: 1px solid var(--border-base); font-size: 12px; font-weight: 600; color: var(--text-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+
+        /* Mobile Responsive Viewports */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar-nav { width: 100%; height: auto; position: fixed; top: 0; padding: 15px 20px; flex-direction: row; align-items: center; justify-content: space-between; border-right: none; border-bottom: 1px solid var(--border-base); box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+            .nav-brand { margin-bottom: 0; }
+            .menu-links { flex-direction: row; gap: 5px; }
+            .menu-links a { padding: 8px 12px; font-size: 13px; }
+            .nav-footer { display: none; }
+            .main-content { margin-left: 0; padding-top: 60px; }
+            section { min-height: calc(100vh - 70px); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar-nav">
+        <div>
+            <div class="nav-brand">SaiKet<span>.Menu</span></div>
+            <div class="menu-links" id="menuGroup">
+                <a href="#dashboard" class="active" onclick="setActive(this)"><span>📊</span> Dashboard</a>
+                <a href="#analytics" onclick="setActive(this)"><span>📈</span> Analytics</a>
+                <a href="#messages" onclick="setActive(this)"><span>✉️</span> Messages</a>
+                <a href="#settings" onclick="setActive(this)"><span>⚙️</span> Settings</a>
+            </div>
+        </div>
+        <div class="nav-footer">
+            SaiKet Systems Evaluation © 2026
+        </div>
+    </nav>
+
+    <div class="main-content">
+        
+        <section id="dashboard">
+            <div class="status-badge">View ID: #01</div>
+            <span class="section-tag">Overview</span>
+            <h1>Control Dashboard</h1>
+            <p>Welcome to your interface terminal. This responsive space serves as the structural baseline for testing deep-link page transitions and layout performance inside modern web environments.</p>
+        </section>
+
+        <section id="analytics">
+            <div class="status-badge">View ID: #02</div>
+            <span class="section-tag">Data Matrix</span>
+            <h1>Real-time Analytics</h1>
+            <p>Analyze clean data arrays and metrics dynamically. The sidebar links map coordinates smoothly to help users glide across complex landing layouts effortlessly without standard window flashing.</p>
+        </section>
+
+        <section id="messages">
+            <div class="status-badge">View ID: #03</div>
+            <span class="section-tag">Communication</span>
+            <h1>Inbox & Requests</h1>
+            <p>Review internal alerts, user validation parameters, and component feedback loops. Our fluid css active classes auto-respond directly upon selection events for instant state confirmation.</p>
+        </section>
+
+        <section id="settings">
+            <div class="status-badge">View ID: #04</div>
+            <span class="section-tag">Configuration</span>
+            <h1>System Settings</h1>
+            <p>Customize system behavior, theme variables, and operational thresholds. Adjust your application parameters here to calibrate user experience delivery seamlessly.</p>
+        </section>
+
+    </div>
+
+    <script>
+        function setActive(element) {
+            // Remove active class from all anchor elements
+            const links = document.querySelectorAll('#menuGroup a');
+            links.forEach(link => link.classList.remove('active'));
+            
+            // Apply class to current target component
+            element.classList.add('active');
+        }
+    </script>
+</body>
+</html>
