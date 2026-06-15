@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 4: Interactive Glassmorphic Form</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        :root {
+            --bg-base: #fff5f8;
+            --text-primary: #5c3b46;
+            --text-secondary: #8c6a75;
+            --accent-pink: #ffb7c5;
+            --card-glass: rgba(255, 255, 255, 0.8);
+            --border-base: #f1d3db;
+            --focus-pink: #ffcfd9;
+        }
+
+        body { background: var(--bg-base); color: var(--text-primary); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 40px 20px; }
+
+        /* Form Wrapper Glass Container */
+        .form-container { background: var(--card-glass); max-width: 600px; width: 100%; padding: 45px; border-radius: 24px; border: 1px solid var(--border-base); box-shadow: 0 15px 35px rgba(92, 59, 70, 0.05); backdrop-filter: blur(12px); animation: slideUp 0.6s ease; }
+        
+        .form-header { text-align: center; margin-bottom: 35px; }
+        .form-header h2 { font-size: 28px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .form-header p { font-size: 14px; color: var(--text-secondary); }
+
+        /* Form Layout Rows */
+        .form-group { margin-bottom: 22px; display: flex; flex-direction: column; gap: 8px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        label { font-size: 13px; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* Form Inputs & Fields styling */
+        input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 12px 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid var(--border-base); color: var(--text-primary); font-size: 15px; border-radius: 12px; transition: 0.3s; outline: none; }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent-pink); background: #ffffff; box-shadow: 0 0 0 4px var(--focus-pink); }
+
+        /* Radio Buttons & Checkboxes Custom Design */
+        .radio-checkbox-group { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 4px; }
+        .option-label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-secondary); text-transform: none; font-weight: 500; cursor: pointer; letter-spacing: 0; }
+        input[type="radio"], input[type="checkbox"] { accent-color: var(--accent-pink); width: 16px; height: 16px; cursor: pointer; }
+
+        /* Action Form Button */
+        .submit-btn { background: linear-gradient(90deg, #ffcfd9, #ffdbe2); color: var(--text-primary); border: 1px solid var(--border-base); padding: 15px; font-size: 15px; font-weight: 700; border-radius: 12px; cursor: pointer; transition: 0.3s; width: 100%; margin-top: 10px; box-shadow: 0 4px 12px rgba(241, 211, 219, 0.6); }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(241, 211, 219, 0.9); background: var(--accent-pink); color: white; border-color: var(--accent-pink); }
+        
+        /* Real-Time UI Validation Styling */
+        .error-msg { font-size: 11px; color: #e11d48; display: none; font-weight: 600; }
+        .invalid input { border-color: #fca5a5 !important; background: #fff5f5; }
+
+        /* Footer Stamp */
+        .form-footer { font-size: 11px; text-align: center; margin-top: 25px; color: var(--text-secondary); opacity: 0.7; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; gap: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h2>Connect With Me</h2>
+            <p>SaiKet Systems Assignment Portfolio Terminal Validation</p>
+        </div>
+
+        <form id="evaluationForm" onsubmit="return validateForm(event)">
+            
+            <div class="form-row">
+                <div class="form-group" id="fnGroup">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" placeholder="Prerna">
+                    <span class="error-msg">First name is required</span>
+                </div>
+                <div class="form-group" id="lnGroup">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" placeholder="Singh">
+                    <span class="error-msg">Last name is required</span>
+                </div>
+            </div>
+
+            <div class="form-group" id="emailGroup">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="prerna@example.com">
+                <span class="error-msg">Please enter a valid email address</span>
+            </div>
+
+            <div class="form-group">
+                <label for="inquiryType">Inquiry Purpose</label>
+                <select id="inquiryType">
+                    <option value="internship">Internship Review Evaluation</option>
+                    <option value="project">Project Collaboration</option>
+                    <option value="fullstack">MERN Full-Stack Query</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Preferred Communication Channel</label>
+                <div class="radio-checkbox-group">
+                    <label class="option-label">
+                        <input type="radio" name="commChannel" value="email" checked> Email Notification
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="commChannel" value="linkedin"> LinkedIn DM
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Tech Domains of Interest</label>
+                <div class="radio-checkbox-group">
+                    <label class="option-label">
+                        <input type="checkbox" id="tech1" value="mern" checked> MERN Stack
+                    </label>
+                    <label class="option-label">
+                        <input type="checkbox" id="tech2" value="uiux"> UI/UX Design
+                    </label>
+                    <label class="option-label">
+                        <input type="checkbox" id="tech3" value="iot"> Arduino & Automation
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group" id="msgGroup">
+                <label for="message">Message Details</label>
+                <textarea id="message" rows="4" placeholder="Write your message details here..."></textarea>
+                <span class="error-msg">Message must be at least 10 characters long</span>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Form</button>
+            
+            <div class="form-footer">
+                SaiKet Systems Task Evaluation Unit • 2026
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function validateForm(event) {
+            event.preventDefault();
+            let isValid = true;
+
+            // Target Elements
+            const firstName = document.getElementById('firstName');
+            const lastName = document.getElementById('lastName');
+            const email = document.getElementById('email');
+            const message = document.getElementById('message');
+
+            // Standard Element validation resets
+            document.querySelectorAll('.form-group').forEach(g => g.classList.remove('invalid'));
+            document.querySelectorAll('.error-msg').forEach(m => m.style.display = 'none');
+
+            // First Name validation
+            if (!firstName.value.trim()) {
+                document.getElementById('fnGroup').classList.add('invalid');
+                document.querySelector('#fnGroup .error-msg').style.display = 'block';
+                isValid = false;
+            }
+
+            // Last Name validation
+            if (!lastName.value.trim()) {
+                document.getElementById('lnGroup').classList.add('invalid');
+                document.querySelector('#lnGroup .error-msg').style.display = 'block';
+                isValid = false;
+            }
+
+            // Email syntax validation regex
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value.trim())) {
+                document.getElementById('emailGroup').classList.add('invalid');
+                document.querySelector('#emailGroup .error-msg').style.display = 'block';
+                isValid = false;
+            }
+
+            // Textarea validation rule
+            if (message.value.trim().length < 10) {
+                document.getElementById('msgGroup').classList.add('invalid');
+                document.querySelector('#msgGroup .error-msg').style.display = 'block';
+                isValid = false;
+            }
+
+            // Post-success logic processing
+            if (isValid) {
+                alert('✨ Form submitted successfully! Inputs validated and sent smoothly.');
+                document.getElementById('evaluationForm').reset();
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
+</html>
