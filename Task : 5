@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 5: Premium Glassmorphic Blog Platform</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        :root {
+            --bg-base: #fff5f8;
+            --text-primary: #5c3b46;
+            --text-secondary: #8c6a75;
+            --accent-pink: #ffb7c5;
+            --card-glass: rgba(255, 255, 255, 0.75);
+            --border-base: #f1d3db;
+            --focus-glow: #ffcfd9;
+        }
+
+        body { background: var(--bg-base); color: var(--text-primary); min-height: 100vh; padding: 50px 20px; display: flex; flex-direction: column; align-items: center; gap: 40px; }
+
+        /* Main Structured Layout Container */
+        .blog-wrapper { max-width: 850px; width: 100%; display: grid; grid-template-columns: 1fr; gap: 40px; }
+        
+        /* Glass Creator Tool Panel */
+        .creator-card { background: var(--card-glass); padding: 35px; border-radius: 24px; border: 1px solid var(--border-base); box-shadow: 0 12px 30px rgba(92, 59, 70, 0.04); backdrop-filter: blur(10px); }
+        .creator-card h2 { font-size: 24px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+        .creator-card p { font-size: 13px; color: var(--text-secondary); margin-bottom: 25px; }
+
+        .input-group { margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        input[type="text"], textarea { width: 100%; padding: 12px 16px; background: rgba(255, 255, 255, 0.8); border: 1px solid var(--border-base); border-radius: 12px; color: var(--text-primary); font-size: 15px; outline: none; transition: 0.3s; }
+        input:focus, textarea:focus { border-color: var(--accent-pink); background: #fff; box-shadow: 0 0 0 4px var(--focus-glow); }
+
+        /* Action Controls Layout Buttons */
+        .btn-panel { display: flex; gap: 12px; }
+        .primary-btn { background: linear-gradient(90deg, #ffcfd9, #ffdbe2); color: var(--text-primary); border: 1px solid var(--border-base); padding: 14px 28px; font-size: 14px; font-weight: 700; border-radius: 12px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(241, 211, 219, 0.5); }
+        .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(241, 211, 219, 0.8); background: var(--accent-pink); color: white; border-color: var(--accent-pink); }
+        
+        .cancel-btn { background: transparent; color: var(--text-secondary); border: 1px solid transparent; padding: 14px 20px; font-size: 14px; font-weight: 600; border-radius: 12px; cursor: pointer; transition: 0.3s; display: none; }
+        .cancel-btn:hover { background: rgba(92, 59, 70, 0.05); color: var(--text-primary); }
+
+        /* Rendered Dynamic Feed Stream */
+        .feed-container { display: flex; flex-direction: column; gap: 24px; }
+        .feed-title { font-size: 18px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px; padding-left: 5px; display: flex; align-items: center; gap: 10px; }
+        .feed-title::after { content: ''; flex: 1; height: 1px; background: var(--border-base); }
+
+        .blog-card { background: var(--card-glass); padding: 30px; border-radius: 20px; border: 1px solid var(--border-base); box-shadow: 0 8px 24px rgba(92, 59, 70, 0.03); backdrop-filter: blur(10px); animation: fadeIn 0.4s ease; display: flex; flex-direction: column; gap: 12px; position: relative; }
+        .blog-meta { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        .blog-meta .dot { width: 4px; height: 4px; background: var(--accent-pink); border-radius: 50%; }
+        .blog-heading { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .blog-body { font-size: 14px; color: var(--text-secondary); line-height: 1.6; white-space: pre-wrap; }
+
+        /* Card Mutation Event Controls */
+        .card-actions { display: flex; gap: 15px; margin-top: 10px; padding-top: 15px; border-top: 1px dashed var(--border-base); }
+        .action-link { font-size: 13px; font-weight: 700; cursor: pointer; background: none; border: none; outline: none; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .edit-link { color: #b45309; } /* Subtle golden brown */
+        .edit-link:hover { color: #d97706; transform: translateY(-1px); }
+        .delete-link { color: #be123c; } /* Soft red */
+        .delete-link:hover { color: #e11d48; transform: translateY(-1px); }
+
+        .empty-state { text-align: center; padding: 40px; border: 2px dashed var(--border-base); border-radius: 20px; color: var(--text-secondary); font-size: 14px; font-style: italic; background: rgba(255, 255, 255, 0.3); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="blog-wrapper">
+        <div class="creator-card">
+            <h2 id="formTitle">Write an Article</h2>
+            <p id="formDesc">Share your insights, code breakthroughs, or documentation highlights.</p>
+            
+            <form id="postForm" onsubmit="handleFormSubmit(event)">
+                <div class="input-group">
+                    <label for="postTitle">Article Title</label>
+                    <input type="text" id="postTitle" placeholder="e.g., Mastering the MERN Stack Lifecycle" required>
+                </div>
+                <div class="input-group">
+                    <label for="postContent">Content Body</label>
+                    <textarea id="postContent" rows="5" placeholder="Unleash your technical knowledge here..." required></textarea>
+                </div>
+                <div class="btn-panel">
+                    <button type="submit" id="submitBtn" class="primary-btn">Publish Post</button>
+                    <button type="button" id="cancelBtn" class="cancel-btn" onclick="resetFormState()">Cancel Edit</button>
+                </div>
+            </form>
+        </div>
+
+        <div>
+            <h3 class="feed-title">📰 Articles Feed</h3>
+            <div class="feed-container" id="blogFeed">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        let blogPosts = JSON.parse(localStorage.getItem('saiKetBlogPosts')) || [];
+        let editingPostId = null;
+
+        // Boot and initialization cycle
+        document.addEventListener('DOMContentLoaded', renderFeed);
+
+        function renderFeed() {
+            const feedContainer = document.getElementById('blogFeed');
+            feedContainer.innerHTML = '';
+
+            if (blogPosts.length === 0) {
+                feedContainer.innerHTML = '<div class="empty-state">No articles published yet. Be the first to create one!</div>';
+                return;
+            }
+
+            // Sort posts chronologically (newest first)
+            const sortedPosts = [...blogPosts].reverse();
+
+            sortedPosts.forEach(post => {
+                const card = document.createElement('div');
+                card.className = 'blog-card';
+                card.innerHTML = `
+                    <div class="blog-meta">
+                        <span>✍️ Author: Prerna Singh</span>
+                        <div class="dot"></div>
+                        <span>⏱️ ${post.date}</span>
+                    </div>
+                    <h4 class="blog-heading">${escapeHTML(post.title)}</h4>
+                    <p class="blog-body">${escapeHTML(post.content)}</p>
+                    <div class="card-actions">
+                        <button class="action-link edit-link" onclick="startEditPost('${post.id}')">✏️ Edit</button>
+                        <button class="action-link delete-link" onclick="deletePost('${post.id}')">🗑️ Delete</button>
+                    </div>
+                `;
+                feedContainer.appendChild(card);
+            });
+        }
+
+        // Handle structural dynamic submission events
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const titleInput = document.getElementById('postTitle');
+            const contentInput = document.getElementById('postContent');
+
+            if (editingPostId) {
+                // Save edited parameters logic branch
+                blogPosts = blogPosts.map(post => {
+                    if (post.id === editingPostId) {
+                        return {
+                            ...post,
+                            title: titleInput.value.trim(),
+                            content: contentInput.value.trim(),
+                            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' (Edited)'
+                        };
+                    }
+                    return post;
+                });
+                editingPostId = null;
+            } else {
+                // Structural instance generation for new elements
+                const newPost = {
+                    id: 'post_' + Date.now(),
+                    title: titleInput.value.trim(),
+                    content: contentInput.value.trim(),
+                    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                };
+                blogPosts.push(newPost);
+            }
+
+            saveAndSyncData();
+            resetFormState();
+        }
+
+        // Trigger modification layout phase
+        function startEditPost(id) {
+            const targetPost = blogPosts.find(p => p.id === id);
+            if (!targetPost) return;
+
+            editingPostId = id;
+            document.getElementById('postTitle').value = targetPost.title;
+            document.getElementById('postContent').value = targetPost.content;
+
+            // Transmute interface styling properties safely
+            document.getElementById('formTitle').innerText = 'Modify Your Article';
+            document.getElementById('formDesc').innerText = 'Updating core components and entry descriptions dynamically.';
+            document.getElementById('submitBtn').innerText = 'Save Changes';
+            document.getElementById('cancelBtn').style.display = 'block';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Structural deletion mechanism
+        function deletePost(id) {
+            if (confirm('Are you absolutely sure you want to remove this entry?')) {
+                blogPosts = blogPosts.filter(p => p.id !== id);
+                if (editingPostId === id) resetFormState();
+                saveAndSyncData();
+            }
+        }
+
+        // Clean UI resets
+        function resetFormState() {
+            editingPostId = null;
+            document.getElementById('postForm').reset();
+            document.getElementById('formTitle').innerText = 'Write an Article';
+            document.getElementById('formDesc').innerText = 'Share your insights, code breakthroughs, or documentation highlights.';
+            document.getElementById('submitBtn').innerText = 'Publish Post';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        // Sync helper
+        function saveAndSyncData() {
+            localStorage.setItem('saiKetBlogPosts', JSON.stringify(blogPosts));
+            renderFeed();
+        }
+
+        // Security escaping guardrail
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag] || tag));
+        }
+    </script>
+</body>
+</html>
