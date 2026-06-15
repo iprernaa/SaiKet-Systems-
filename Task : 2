@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Pastel Product Page</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        :root {
+            --bg-base: #fff5f8;
+            --text-primary: #5c3b46;
+            --text-secondary: #8c6a75;
+            --accent-pink: #ffb7c5;
+            --card-glass: rgba(255, 255, 255, 0.75);
+            --border-base: #f1d3db;
+        }
+
+        body { background: var(--bg-base); color: var(--text-primary); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 40px 20px; position: relative; }
+        
+        /* Floating Shopping Cart Badge */
+        .header-cart { position: absolute; top: 25px; right: 8%; background: var(--card-glass); padding: 10px 22px; border-radius: 20px; border: 1px solid var(--border-base); display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 10px rgba(92, 59, 70, 0.05); backdrop-filter: blur(8px); }
+        .cart-count { background: #ffcfd9; color: var(--text-primary); font-weight: bold; padding: 3px 10px; border-radius: 8px; font-size: 14px; border: 1px solid var(--border-base); }
+
+        /* Product Main Container */
+        .product-container { background: var(--card-glass); display: flex; max-width: 850px; width: 100%; border-radius: 24px; border: 1px solid var(--border-base); overflow: hidden; box-shadow: 0 15px 35px rgba(92, 59, 70, 0.06); backdrop-filter: blur(10px); }
+        
+        /* Left: Product Showcase Window */
+        .product-image-box { flex: 1; background: linear-gradient(135deg, #fff1f4 0%, #ffe3e8 100%); display: flex; justify-content: center; align-items: center; min-height: 400px; position: relative; overflow: hidden; border-right: 1px solid var(--border-base); }
+        .product-image-box::before { content: '🎧'; font-size: 140px; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: drop-shadow(0 10px 15px rgba(92, 59, 70, 0.1)); }
+        .product-container:hover .product-image-box::before { transform: scale(1.12) rotate(-6px); }
+        .badge { position: absolute; top: 20px; left: 20px; background: #ffb7c5; color: #fff; font-size: 11px; font-weight: bold; padding: 5px 14px; border-radius: 20px; letter-spacing: 1px; border: 1px solid #fff; }
+
+        /* Right: Commercial Information Details */
+        .product-details { flex: 1; padding: 45px; display: flex; flex-direction: column; justify-content: center; }
+        .brand { color: var(--text-secondary); font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+        .title { font-size: 28px; font-weight: 800; color: var(--text-primary); margin-bottom: 12px; line-height: 1.2; }
+        
+        /* Interactive Rating Array */
+        .rating { display: flex; align-items: center; gap: 5px; margin-bottom: 20px; }
+        .stars { color: #f59e0b; font-size: 18px; letter-spacing: 2px; }
+        .reviews-count { color: var(--text-secondary); font-size: 13px; margin-left: 5px; font-weight: 500; }
+
+        .description { color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: 25px; }
+        
+        /* Price Tags Layout */
+        .price-container { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+        .current-price { font-size: 32px; font-weight: 800; color: var(--text-primary); }
+        .original-price { font-size: 18px; color: var(--text-secondary); text-decoration: line-through; opacity: 0.7; }
+
+        /* Call To Action Button (Pastel Core Element) */
+        .add-btn { background: linear-gradient(90deg, #ffcfd9, #ffdbe2); color: var(--text-primary); border: 1px solid var(--border-base); padding: 16px; font-size: 16px; font-weight: 700; border-radius: 14px; cursor: pointer; transition: 0.3s ease; box-shadow: 0 4px 15px rgba(241, 211, 219, 0.6); width: 100%; text-align: center; }
+        .add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(241, 211, 219, 1); background: #ffb7c5; color: #fff; border-color: #ffb7c5; }
+        .add-btn:active { transform: translateY(0); }
+
+        /* Responsive Setup Rules */
+        @media (max-width: 768px) {
+            .product-container { flex-direction: column; }
+            .header-cart { position: fixed; z-index: 10; top: 15px; right: 15px; }
+            body { padding-top: 100px; }
+            .product-image-box { border-right: none; border-bottom: 1px solid var(--border-base); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-cart">
+        <span>🛒 Shopping Bags</span>
+        <span class="cart-count" id="cartBadge">0</span>
+    </div>
+
+    <div class="product-container">
+        <div class="product-image-box">
+            <span class="badge">TRENDING</span>
+        </div>
+        
+        <div class="product-details">
+            <span class="brand">Acoustics Pastel Line</span>
+            <h1 class="title">AeroSync Wireless Headphones</h1>
+            
+            <div class="rating">
+                <span class="stars">★★★★★</span>
+                <span class="reviews-count">(1,840 ratings)</span>
+            </div>
+            
+            <p class="description">Immerse yourself into studio-grade acoustics wrapped in clean luxury. Engineered with deep-bass hybrid cancellation, customizable sound profiles, and cloudsilk ear cushions delivering up to 35 hours of pure audio bliss.</p>
+            
+            <div class="price-container">
+                <span class="current-price">₹3,499</span>
+                <span class="original-price">₹6,999</span>
+            </div>
+            
+            <button class="add-btn" onclick="updateCart()">Add to Cart</button>
+        </div>
+    </div>
+
+    <script>
+        let count = 0;
+        function updateCart() {
+            count++;
+            document.getElementById('cartBadge').innerText = count;
+            alert('Item added to your shopping bag! 🛒');
+        }
+    </script>
+</body>
+</html>
