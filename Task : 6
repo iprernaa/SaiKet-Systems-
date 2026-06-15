@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 6: Advanced Interactive Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        :root {
+            --bg-base: #fff5f8;
+            --text-primary: #5c3b46;
+            --text-secondary: #8c6a75;
+            --accent-pink: #ffb7c5;
+            --card-glass: rgba(255, 255, 255, 0.8);
+            --border-base: #f1d3db;
+            --focus-glow: #ffcfd9;
+            --success-green: #e6f4ea;
+            --success-text: #137333;
+        }
+
+        body { background: var(--bg-base); color: var(--text-primary); min-height: 100vh; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+
+        /* Dashboard Container Shell */
+        .dashboard-container { max-width: 950px; width: 100%; display: flex; flex-direction: column; gap: 25px; }
+
+        /* Premium Glass Header Panel */
+        .dash-header { background: var(--card-glass); padding: 30px; border-radius: 24px; border: 1px solid var(--border-base); box-shadow: 0 10px 30px rgba(92, 59, 70, 0.03); backdrop-filter: blur(12px); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .dash-header h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+        .dash-header h1 span { color: var(--text-secondary); font-size: 14px; display: block; font-weight: 500; margin-top: 4px; letter-spacing: 0; }
+
+        /* Live Metrics Counters Widgets (Real-time data display) */
+        .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; }
+        .metric-card { background: var(--card-glass); padding: 20px; border-radius: 18px; border: 1px solid var(--border-base); display: flex; flex-direction: column; gap: 5px; backdrop-filter: blur(10px); }
+        .metric-card span { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px; }
+        .metric-card div { font-size: 28px; font-weight: 800; color: var(--text-primary); id: counter; }
+
+        /* Workspace Grid Split Layout */
+        .workspace-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 25px; }
+        @media (max-width: 800px) { .workspace-grid { grid-template-columns: 1fr; } }
+
+        /* Interactive Input Form Control Box */
+        .interactive-box { background: var(--card-glass); padding: 30px; border-radius: 22px; border: 1px solid var(--border-base); backdrop-filter: blur(10px); height: max-content; }
+        .box-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        
+        .form-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-primary); }
+        input[type="text"], select { width: 100%; padding: 11px 14px; background: rgba(255, 255, 255, 0.8); border: 1px solid var(--border-base); border-radius: 10px; color: var(--text-primary); font-size: 14px; outline: none; transition: 0.3s; }
+        input:focus, select:focus { border-color: var(--accent-pink); background: #fff; box-shadow: 0 0 0 4px var(--focus-glow); }
+        
+        .action-btn { width: 100%; background: linear-gradient(90deg, #ffcfd9, #ffdbe2); color: var(--text-primary); border: 1px solid var(--border-base); padding: 12px; font-size: 14px; font-weight: 700; border-radius: 10px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .action-btn:hover { background: var(--accent-pink); color: white; border-color: var(--accent-pink); transform: translateY(-1px); }
+
+        /* Dynamic Engine Live Stream Feed Area */
+        .stream-box { display: flex; flex-direction: column; gap: 15px; }
+        .filter-bar { display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,0.4); padding: 8px; border-radius: 14px; border: 1px solid var(--border-base); }
+        .search-input { flex: 1; min-width: 120px; }
+
+        .task-list { display: flex; flex-direction: column; gap: 12px; max-height: 480px; overflow-y: auto; padding-right: 5px; }
+        
+        /* Rendered DOM Task Elements styling */
+        .task-card { background: var(--card-glass); padding: 18px; border-radius: 14px; border: 1px solid var(--border-base); display: flex; justify-content: space-between; align-items: center; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transition: 0.3s; }
+        .task-card.completed { background: var(--success-green); border-color: #c6edd2; opacity: 0.85; }
+        .task-card.completed .task-text { text-decoration: line-through; color: var(--text-secondary); }
+        
+        .task-details { display: flex; flex-direction: column; gap: 4px; }
+        .task-text { font-size: 15px; font-weight: 600; }
+        .task-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 12px; width: max-content; text-transform: uppercase; background: #fff; border: 1px solid var(--border-base); }
+        
+        .task-actions { display: flex; gap: 8px; }
+        .icon-btn { border: 1px solid var(--border-base); background: #fff; padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 13px; }
+        .icon-btn:hover { background: var(--focus-glow); transform: scale(1.05); }
+
+        .empty-view { text-align: center; padding: 40px; color: var(--text-secondary); font-size: 14px; font-style: italic; border: 2px dashed var(--border-base); border-radius: 14px; background: rgba(255,255,255,0.2); }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .footer-stamp { text-align: center; font-size: 11px; color: var(--text-secondary); opacity: 0.6; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <header class="dash-header">
+            <div>
+                <h1>SaiKet Workspace Terminal 🏢</h1>
+                <span>Interactive DOM Engine Assessment Terminal • Developer Portfolio</span>
+            </div>
+        </header>
+
+        <div class="metrics-row">
+            <div class="metric-card">
+                <span>Total Actions Loaded</span>
+                <div id="totalTasksCount">0</div>
+            </div>
+            <div class="metric-card">
+                <span>Completed Tasks</span>
+                <div id="completedTasksCount" style="color: var(--success-text);">0</div>
+            </div>
+            <div class="metric-card">
+                <span>Pending Trackers</span>
+                <div id="pendingTasksCount" style="color: #b45309;">0</div>
+            </div>
+        </div>
+
+        <div class="workspace-grid">
+            
+            <div class="interactive-box">
+                <div class="box-title">⚙️ Control Panel</div>
+                <form id="taskForm" onsubmit="createNewTask(event)">
+                    <div class="form-group">
+                        <label for="taskName">Task / Milestone Name</label>
+                        <input type="text" id="taskName" placeholder="e.g., Deploy Node API endpoints" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskCategory">Category Designation</label>
+                        <select id="taskCategory">
+                            <option value="MERN Development">MERN Development</option>
+                            <option value="UI/UX Engineering">UI/UX Engineering</option>
+                            <option value="System Optimization">System Optimization</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="action-btn">Inject Task Element</button>
+                </form>
+            </div>
+
+            <div class="stream-box">
+                <div class="filter-bar">
+                    <input type="text" id="searchBar" class="search-input" placeholder="🔍 Search components..." oninput="renderDashboardStream()">
+                    <select id="categoryFilter" style="width: auto; padding: 6px 10px; font-size: 13px;" onchange="renderDashboardStream()">
+                        <option value="ALL">Show All Categories</option>
+                        <option value="MERN Development">MERN Development</option>
+                        <option value="UI/UX Engineering">UI/UX Engineering</option>
+                        <option value="System Optimization">System Optimization</option>
+                    </select>
+                </div>
+
+                <div class="task-list" id="dashboardListStream">
+                    </div>
+            </div>
+
+        </div>
+
+        <div class="footer-stamp">
+            SaiKet Systems Terminal Evaluation Complete © 2026 • Verified User Status: Prerna Singh
+        </div>
+    </div>
+
+    <script>
+        // Internal state storage initialized with dummy showcase items
+        let dataset = [
+            { id: 1, title: 'Build Glassmorphic UI Assets', category: 'UI/UX Engineering', completed: true },
+            { id: 2, title: 'Integrate browser localStorage pipelines', category: 'MERN Development', completed: false }
+        ];
+
+        // Boot system sequence
+        document.addEventListener('DOMContentLoaded', renderDashboardStream);
+
+        // Core Render Engine Mapping arrays directly into DOM nodes
+        function renderDashboardStream() {
+            const listContainer = document.getElementById('dashboardListStream');
+            const searchKeyword = document.getElementById('searchBar').value.toLowerCase().trim();
+            const chosenCategory = document.getElementById('categoryFilter').value;
+
+            listContainer.innerHTML = '';
+
+            // Apply logical filtration streams
+            const filteredData = dataset.filter(item => {
+                const matchesSearch = item.title.toLowerCase().includes(searchKeyword);
+                const matchesCategory = (chosenCategory === 'ALL' || item.category === chosenCategory);
+                return matchesSearch && matchesCategory;
+            });
+
+            // If empty, display visual validation state notice
+            if (filteredData.length === 0) {
+                listContainer.innerHTML = '<div class="empty-view">No dashboard modules match your search parameters.</div>';
+                updateMetricsCounters();
+                return;
+            }
+
+            // Create DOM elements programmatically
+            filteredData.forEach(item => {
+                const elementRow = document.createElement('div');
+                elementRow.className = task-card ${item.completed ? 'completed' : ''};
+                
+                elementRow.innerHTML = `
+                    <div class="task-details">
+                        <span class="task-text">${escapeHTML(item.title)}</span>
+                        <span class="task-badge">${item.category}</span>
+                    </div>
+                    <div class="task-actions">
+                        <button class="icon-btn" onclick="toggleTaskStatus(${item.id})" title="Toggle Complete">
+                            ${item.completed ? '↩️' : '✅'}
+                        </button>
+                        <button class="icon-btn" onclick="destroyTask(${item.id})" title="Delete Node">🗑️</button>
+                    </div>
+                `;
+                listContainer.appendChild(elementRow);
+            });
+
+            updateMetricsCounters();
+        }
+
+        // Action Trigger: Create New Element Node
+        function createNewTask(event) {
+            event.preventDefault();
+            const inputField = document.getElementById('taskName');
+            const categorySelect = document.getElementById('taskCategory');
+
+            const itemNode = {
+                id: Date.now(),
+                title: inputField.value.trim(),
+                category: categorySelect.value,
+                completed: false
+            };
+
+            dataset.push(itemNode);
+            inputField.value = ''; // Clean buffer state
+            
+            renderDashboardStream();
+        }
+
+        // Action Trigger: Mutate Complete State Property
+        function toggleTaskStatus(id) {
+            dataset = dataset.map(item => item.id === id ? { ...item, completed: !item.completed } : item);
+            renderDashboardStream();
+        }
+
+        // Action Trigger: Destroy DOM element instantiation row
+        function destroyTask(id) {
+            dataset = dataset.filter(item => item.id !== id);
+            renderDashboardStream();
+        }
+
+        // Live Dynamic Metric Re-calculation Engine
+        function updateMetricsCounters() {
+            const total = dataset.length;
+            const completed = dataset.filter(i => i.completed).length;
+            const pending = total - completed;
+
+            document.getElementById('totalTasksCount').innerText = total;
+            document.getElementById('completedTasksCount').innerText = completed;
+            document.getElementById('pendingTasksCount').innerText = pending;
+        }
+
+        // Sanitization entity escape guardrail
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag] || tag));
+        }
+    </script>
+</body>
+</html>
